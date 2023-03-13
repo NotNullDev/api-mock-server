@@ -1,19 +1,10 @@
 <script lang="ts">
 	import { clsx } from 'clsx';
+	import { Toaster } from 'svelte-french-toast';
+	import { fly } from 'svelte/transition';
+	import { endpoints, selectedIndexes } from '../stores/store';
 	import AddEndpoint from './add-endpoint.svelte';
 	import Endpoint from './endpoint.svelte';
-
-	const endpoints: string[] = [
-		'/api/v1/{{var1}}/{{var2}}/{{var3}}/{{haha}}/path1',
-		'/api/v1/{{var1}}/{{var2}}/{{var3}}/{{haha}}/path2',
-		'/api/v1/{{var1}}/{{var2}}/{{var3}}/{{haha}}/path3'
-	];
-
-	const env = new Map<string, string>([
-		['var1', 'user'],
-		['var2', 'profile'],
-		['var3', 'settings']
-	]);
 </script>
 
 <div class="flex justify-center flex-1 flex-col items-center">
@@ -44,8 +35,19 @@
 
 	<ul class="mt-10 w-full items-center flex flex-col px-[10%] gap-2 rounded">
 		<AddEndpoint />
-		{#each endpoints as endpoint}
-			<Endpoint {endpoint} />
+		{#each $endpoints as endpoint, idx}
+			<Endpoint {endpoint} index={idx} />
 		{/each}
 	</ul>
 </div>
+
+<Toaster />
+
+{#if $selectedIndexes.length > 0}
+	<button
+		in:fly={{ y: 50 }}
+		out:fly={{ y: 50 }}
+		class="absolute top-1/3 left-1/2 -translate-x-1/2 z-50 p-4 bg-error rounded-xl text-error-content"
+		>Delete {$selectedIndexes.length} item(s)</button
+	>
+{/if}

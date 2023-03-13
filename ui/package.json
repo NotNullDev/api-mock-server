@@ -32,6 +32,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@formkit/auto-animate": "^1.0.0-beta.6",
 		"clsx": "^1.2.1",
 		"daisyui": "^2.51.3",
 		"svelte-french-toast": "^1.0.3"

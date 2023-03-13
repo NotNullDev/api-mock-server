@@ -1,16 +1,53 @@
-<script>
+<script lang="ts">
 	import { clsx } from 'clsx';
+	import { appEnv, selectedIndexes } from '../stores/store';
 	import EyeOff from './eye-off.svelte';
+	import EyeOn from './eye-on.svelte';
 
 	export let endpoint = '';
+	export let index: number;
+
+	let show = false;
+
+	$: {
+		if (!show) {
+			for (let [key, val] of $appEnv.entries()) {
+				endpoint = endpoint.replaceAll(val, `{{${key}}}`);
+			}
+		} else {
+			for (let [key, val] of $appEnv.entries()) {
+				endpoint = endpoint.replaceAll(`{{${key}}}`, val);
+			}
+		}
+	}
+
+	let checkboxValue: boolean;
 </script>
 
 <div
 	class={clsx(
-		'flex gap-2'
+		'flex gap-2 relative items-center'
 		// 'p-4 shadow border-base-200 border rounded-xl flex gap-3 w-full items-center justify-center'
 	)}
 >
+	<input
+		type="checkbox"
+		class="checkbox checkbox-lg checkbox-primary absolute -translate-x-[120%] border-slate-700"
+		bind:checked={checkboxValue}
+		on:click={() => {
+			if (checkboxValue) {
+				selectedIndexes.update((old) => {
+					old = old.filter((v) => v != index);
+					return old;
+				});
+			} else {
+				selectedIndexes.update((old) => {
+					old.push(index);
+					return old;
+				});
+			}
+		}}
+	/>
 	<div class="form-control">
 		<div class="input-group">
 			<div
@@ -21,8 +58,15 @@
 			>
 				{endpoint}
 			</div>
-			<button class="p-4 bg-base-200 active:scale-110 hover:bg-base-300">
-				<EyeOff />
+			<button
+				class="p-4 bg-base-200 active:scale-110 hover:bg-base-300"
+				on:click={() => (show = !show)}
+			>
+				{#if show}
+					<EyeOff />
+				{:else}
+					<EyeOn />
+				{/if}
 			</button>
 		</div>
 	</div>

@@ -1,12 +1,14 @@
-<script>
+<script lang="ts">
 	import { clsx } from 'clsx';
+	import toast from 'svelte-french-toast';
+	import { endpoints } from '../stores/store';
 
-	let c = '';
+	let pathValue = '';
 </script>
 
 <div
 	class={clsx(
-		'flex gap-2'
+		'flex gap-2 items-center'
 		// 'p-4 shadow border-base-200 border rounded-xl flex gap-3 w-full items-center justify-center'
 	)}
 >
@@ -17,12 +19,12 @@
 				contenteditable
 				spellcheck={false}
 				aria-multiline={false}
-				bind:textContent={c}
+				bind:textContent={pathValue}
 			/>
 			<button
 				class="p-4 bg-base-200 active:scale-110 hover:bg-base-300"
 				on:click={() => {
-					c = '';
+					pathValue = '';
 				}}
 			>
 				<svg
@@ -49,7 +51,15 @@
 	<button
 		class="active:scale-110 group ml-2"
 		on:click={() => {
-			alert(c);
+			toast(pathValue, {
+				icon: '👏',
+				style: 'border-radius: 200px; background: #333; color: #fff;'
+			});
+			endpoints.update((old) => {
+				old.unshift(pathValue);
+				return old;
+			});
+			pathValue = '';
 		}}
 	>
 		<svg
